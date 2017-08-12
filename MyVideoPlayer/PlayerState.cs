@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +20,30 @@ namespace MyVideoPlayer
         {
             _timerVisibleTitle = new Timer(4000);
             _timerVisibleTitle.Elapsed += timer_visibleTitle;
+            this.Volume = 0.7;
+            this.Status = PlayerStatus.Stop;
         }
 
         public void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private PlayerStatus _status;
+        public PlayerStatus Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                switch(value)
+                {
+                    case PlayerStatus.Play: OnVisibleTitle(); break;
+                    case PlayerStatus.Pause: break;
+                    case PlayerStatus.Stop: OnHideTitle(); break; 
+                }
+            }
         }
 
         public string Title
@@ -38,16 +57,19 @@ namespace MyVideoPlayer
             }
         }
 
-        private string _fileTitle;
-        public string FileTitle
+        private string _fileName;
+        public string FileName
         {
-            get { return _fileTitle; }
+            get { return _fileName; }
             set
             {
-                _fileTitle = value;
-                RaisePropertyChanged("FileTitle");
-                OnVisibleTitle();
+                _fileName = value;
             }
+        }
+
+        public string FileTitle
+        {
+            get { return string.IsNullOrEmpty(FileName) ? string.Empty : Path.GetFileNameWithoutExtension(FileName); }
         }
 
         private double _volume;
@@ -87,9 +109,22 @@ namespace MyVideoPlayer
             _timerVisibleTitle.Start();
         }
 
-        void timer_visibleTitle(object sender, ElapsedEventArgs e)
+        private void OnHideTitle()
         {
             IsVisibleTitle = false;
+            _timerVisibleTitle.Stop();
         }
+
+        void timer_visibleTitle(object sender, ElapsedEventArgs e)
+        {
+            OnHideTitle();
+        }
+    }
+
+    public enum PlayerStatus
+    {
+        Stop,
+        Play,
+        Pause
     }
 }

@@ -22,7 +22,6 @@ namespace MyVideoPlayer
         private string _folderFilms;
         private Random _random = new Random();
 
-        private PlayState _stateEnum;
         private PlayerState _state;
 
         private const string SETTINGS_FOLDER_FILMS = "FolderFilms";
@@ -33,7 +32,6 @@ namespace MyVideoPlayer
             this.Cursor = Cursors.None;
             PART_MediaElement.MediaEnded += PART_MediaElement_MediaEnded;
             PART_MediaElement.MediaFailed += PART_MediaElement_MediaFailed;
-            _stateEnum = PlayState.Stop;
 
             _folderFilms = ConfigurationManager.AppSettings[SETTINGS_FOLDER_FILMS];
 
@@ -42,52 +40,47 @@ namespace MyVideoPlayer
                 MessageBox.Show(string.Format("Не найдена папка с фильмами: {0}", _folderFilms));
             }
 
-            _state = new PlayerState()
-            {
-                Volume = 0.7
-            };
-
-
-
+            _state = new PlayerState();
             this.DataContext = _state;
         }
 
         private void Play()
         {
-            switch (_stateEnum)
+            if (_state.Status == PlayerStatus.Stop)
             {
-                case PlayState.Stop:
-                    var files = Directory.GetFiles(_folderFilms);
+                LoadNextFilm();
+            }
 
-                    if (files.Length > 0)
-                    {
-                        var index = _random.Next(files.Length);
-                        var fileName = files[index];
-                        _state.FileTitle = System.IO.Path.GetFileNameWithoutExtension(fileName);
-                        PART_MediaElement.Source = new Uri(fileName);
-                        PART_MediaElement.Play();
-                        _stateEnum = PlayState.Play;
-                    }
-                    break;
+            if (PART_MediaElement.Source != null)
+            {
+                PART_MediaElement.Play();
+                _state.Status = PlayerStatus.Play;
+            }
+        }
 
-                case PlayState.Pause:
-                    PART_MediaElement.Play();
-                    _stateEnum = PlayState.Play;
-                    break;
+        private void LoadNextFilm()
+        {
+            var files = Directory.GetFiles(_folderFilms);
+
+            if (files.Length > 0)
+            {
+                var index = _random.Next(files.Length);
+                _state.FileName = files[index];
+                PART_MediaElement.Source = new Uri(_state.FileName);
             }
         }
 
         private void Pause()
         {
             PART_MediaElement.Pause();
-            _stateEnum = PlayState.Pause;
+            _state.Status = PlayerStatus.Pause;
         }
 
         private void Stop()
         {
             PART_MediaElement.Stop();
             PART_MediaElement.Source = null;
-            _stateEnum = PlayState.Stop;
+            _state.Status = PlayerStatus.Stop;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -95,7 +88,7 @@ namespace MyVideoPlayer
             switch (e.Key)
             {
                 case Key.Space:
-                    if (_stateEnum == PlayState.Play)
+                    if (_state.Status == PlayerStatus.Play)
                     {
                         Pause();
                     }
@@ -128,12 +121,5 @@ namespace MyVideoPlayer
         {
             Stop();
         }
-    }
-
-    public enum PlayState
-    {
-        Stop,
-        Play,
-        Pause
     }
 }

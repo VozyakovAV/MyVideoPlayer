@@ -3,4 +3,5 @@
 [Bb]in
 [Oo]bj
 .vs
-.suo
+*.suo
+/MyVideoPlayer.v12.suo
