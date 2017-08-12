@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -42,6 +45,7 @@ namespace MyVideoPlayer
 
             _state = new PlayerState();
             this.DataContext = _state;
+            this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
         }
 
         private void Play()
@@ -121,5 +125,52 @@ namespace MyVideoPlayer
         {
             Stop();
         }
+
+        #region WindowTopmost
+        // Приложение всегда поверх остальных
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            m_KeepActiveWorker.CancelAsync();
+            m_KeepActiveWorker.Dispose();
+        }
+
+        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            IntPtr hwnd = (new WindowInteropHelper(this)).Handle;
+            m_KeepActiveWorker.DoWork += KeepActive;
+            m_KeepActiveWorker.WorkerSupportsCancellation = true;
+            m_KeepActiveWorker.RunWorkerAsync(new object[] { this, PART_MediaElement });
+        }
+        static BackgroundWorker m_KeepActiveWorker = new BackgroundWorker();
+        static void KeepActive(object sender, DoWorkEventArgs e)
+        {
+            if (m_KeepActiveWorker.CancellationPending)
+                e.Cancel = true;
+
+            while (!m_KeepActiveWorker.CancellationPending)
+            {
+                Window window = (e.Argument as object[])[0] as Window;
+                UIElement focus = (e.Argument as object[])[1] as UIElement;
+                bool isActive = false;
+                do
+                {
+                    Thread.Sleep(1000);
+
+                    if (!m_KeepActiveWorker.CancellationPending && window != null)
+                    {
+                        window.Dispatcher.Invoke((Action)(() =>
+                        {
+                            isActive = window.IsActive;
+                            window.Activate();
+                            Keyboard.Focus(focus);
+                        }));
+                    }
+
+                } while (!isActive);
+            }
+        }
+
+        #region
     }
 }
