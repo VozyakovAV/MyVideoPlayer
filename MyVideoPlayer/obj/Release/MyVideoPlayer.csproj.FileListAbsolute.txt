@@ -1,0 +1,12 @@
+D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Release\MyVideoPlayer.exe.config
+D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Release\MyVideoPlayer.exe
+D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Release\MyVideoPlayer.pdb
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MainWindow.baml
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MainWindow.g.cs
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\App.g.cs
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer_MarkupCompile.cache
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer.g.resources
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer.Properties.Resources.resources
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer.csproj.GenerateResource.Cache
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer.exe
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Release\MyVideoPlayer.pdb
