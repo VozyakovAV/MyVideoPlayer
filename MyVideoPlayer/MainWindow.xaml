@@ -1,9 +1,22 @@
 ﻿<Window x:Class="MyVideoPlayer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MyVideoPlayer"
         Title="MainWindow" Height="350" Width="525"
-        WindowStyle="None" ResizeMode="NoResize"  
-        WindowStartupLocation="CenterScreen" WindowState="Maximized" Background="Black"
+        WindowStyle="None" ResizeMode="NoResize"
+        WindowState="Maximized" Background="Black"
+        WindowStartupLocation="CenterScreen" 
         KeyDown="Window_KeyDown">
-    <MediaElement x:Name="PART_MediaElement" LoadedBehavior="Manual" />
+    <Window.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+    
+    <Grid>
+        <MediaElement x:Name="PART_MediaElement" LoadedBehavior="Manual" Volume="{Binding Path=Volume}" />
+
+        <StackPanel VerticalAlignment="Bottom" Visibility="{Binding Path=IsVisibleTitle, Converter={StaticResource BoolToVis}}">
+            <Label FontSize="36" Background="Gainsboro" Foreground="Black" HorizontalContentAlignment="Center"
+                Content="{Binding Path=Title, Mode=OneWay}" />
+        </StackPanel>
+    </Grid>
 </Window>

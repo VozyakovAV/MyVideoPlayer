@@ -11,7 +11,5 @@ D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\MyVideoPlayer.exe
 D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\MyVideoPlayer.pdb
 D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Debug\MyVideoPlayer.exe
 D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Debug\MyVideoPlayer.pdb
-D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\DirectShowLib-2005.dll
-D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\EVRPresenter32.dll
-D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\EVRPresenter64.dll
-D:\Projects\MyVideoPlayer\MyVideoPlayer\bin\Debug\WPFMediaKit.dll
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Projects\MyVideoPlayer\MyVideoPlayer\obj\Debug\MyVideoPlayer_MarkupCompile.lref

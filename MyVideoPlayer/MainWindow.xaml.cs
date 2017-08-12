@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,40 +19,60 @@ namespace MyVideoPlayer
 {
     public partial class MainWindow : Window
     {
-        private string _folderFiles = @"C:\Films";
+        private string _folderFilms;
         private Random _random = new Random();
 
-        private PlayState _state;
+        private PlayState _stateEnum;
+        private PlayerState _state;
+
+        private const string SETTINGS_FOLDER_FILMS = "FolderFilms";
 
         public MainWindow()
         {
             InitializeComponent();
             this.Cursor = Cursors.None;
-            PART_MediaElement.Volume = 1;
             PART_MediaElement.MediaEnded += PART_MediaElement_MediaEnded;
             PART_MediaElement.MediaFailed += PART_MediaElement_MediaFailed;
-            _state = PlayState.Stop;
+            _stateEnum = PlayState.Stop;
+
+            _folderFilms = ConfigurationManager.AppSettings[SETTINGS_FOLDER_FILMS];
+
+            if (!Directory.Exists(_folderFilms))
+            {
+                MessageBox.Show(string.Format("Не найдена папка с фильмами: {0}", _folderFilms));
+            }
+
+            _state = new PlayerState()
+            {
+                Volume = 0.7
+            };
+
+
+
+            this.DataContext = _state;
         }
 
         private void Play()
         {
-            switch (_state)
+            switch (_stateEnum)
             {
                 case PlayState.Stop:
-                    var files = Directory.GetFiles(_folderFiles);
+                    var files = Directory.GetFiles(_folderFilms);
 
                     if (files.Length > 0)
                     {
                         var index = _random.Next(files.Length);
-                        PART_MediaElement.Source = new Uri(files[index]);
+                        var fileName = files[index];
+                        _state.FileTitle = System.IO.Path.GetFileNameWithoutExtension(fileName);
+                        PART_MediaElement.Source = new Uri(fileName);
                         PART_MediaElement.Play();
-                        _state = PlayState.Play;
+                        _stateEnum = PlayState.Play;
                     }
                     break;
 
                 case PlayState.Pause:
                     PART_MediaElement.Play();
-                    _state = PlayState.Play;
+                    _stateEnum = PlayState.Play;
                     break;
             }
         }
@@ -59,33 +80,42 @@ namespace MyVideoPlayer
         private void Pause()
         {
             PART_MediaElement.Pause();
-            _state = PlayState.Pause;
+            _stateEnum = PlayState.Pause;
         }
 
         private void Stop()
         {
             PART_MediaElement.Stop();
             PART_MediaElement.Source = null;
-            _state = PlayState.Stop;
+            _stateEnum = PlayState.Stop;
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+            switch (e.Key)
             {
-                if (_state == PlayState.Play)
-                {
-                    Pause();
-                }
-                else
-                {
-                    Play();
-                }
-            }
+                case Key.Space:
+                    if (_stateEnum == PlayState.Play)
+                    {
+                        Pause();
+                    }
+                    else
+                    {
+                        Play();
+                    }
+                    break;
 
-            if (e.Key == Key.Escape)
-            {
-                Stop();
+                case Key.Escape:
+                    Stop();
+                    break;
+
+                case Key.Up:
+                    _state.Volume += 0.05;
+                    break;
+
+                case Key.Down:
+                    _state.Volume -= 0.05;
+                    break;
             }
         }
 
