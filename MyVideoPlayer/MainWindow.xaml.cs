@@ -171,6 +171,6 @@ namespace MyVideoPlayer
             }
         }
 
-        #region
+        #endregion
     }
 }
